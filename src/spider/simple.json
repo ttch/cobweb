@@ -1,0 +1,8 @@
+{
+    "auth": ["touch", "/data0/Server2/src/auth/main.go"],
+    "bms": ["touch", "/data0/Server2/src/bms/main.go"],
+    "aiysea": ["touch", "/data0/Server2/src/aiysea/main.go"],
+    "auth": ["touch", "/data0/Server2/src/auth/main.go"],
+    "aiysea-sass": ["compass", "compile", "/data0/Server2/src/aiysea/"],
+    "status": ["touch", "/data0/Server/src/status/main.go"]
+}
