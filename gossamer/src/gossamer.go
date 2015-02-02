@@ -45,13 +45,13 @@ func main() {
 }
 
 type Config struct {
-	Name       string      `json:"name"`
-	Type       string      `json:"type"`
-	Path       string      `json:"path"`
-	Action     []string    `json:"action"`
-	Include    interface{} `json:"include"`
-	Exclude    interface{} `json:"exclude"`
-	ExcludeDir interface{} `json:"exclude-dir"`
+	Name        string      `json:"name"`
+	Type        string      `json:"type"`
+	Path        string      `json:"path"`
+	Action      []string    `json:"action"`
+	Include     interface{} `json:"include"`
+	Exclude     interface{} `json:"exclude"`
+	ExcludeDirs interface{} `json:"exclude-dirs"`
 }
 
 func watchIt(conf Config) {
@@ -68,24 +68,23 @@ func watchDir(conf Config, path string) {
 		panic(fmt.Errorf("watcher can't watch %v , got: %v \n count: %v", path, err, count))
 	}
 	count += 1
-	subs, err := ioutil.ReadDir(conf.Path)
+	subs, err := ioutil.ReadDir(path)
 	CheckErr(err)
 	for _, sub := range subs {
 		if sub.IsDir() {
-			subpath := filepath.Join(path, sub.Name())
 			matchExclude := false
-			if conf.ExcludeDir != nil {
-				extds := conf.ExcludeDir.([]interface{})
+			if conf.ExcludeDirs != nil {
+				extds := conf.ExcludeDirs.([]interface{})
 				for _, extd := range extds {
 					extpath := extd.(string)
-					matchExclude, err := filepath.Match(extpath, sub.Name())
+					matchExclude, err = filepath.Match(extpath, sub.Name())
 					CheckErr(err)
 					if matchExclude {
 						break
-
 					}
 				}
 			}
+			subpath := filepath.Join(path, sub.Name())
 			if !matchExclude {
 				go watchDir(conf, subpath)
 				logger <- subpath
