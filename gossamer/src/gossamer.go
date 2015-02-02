@@ -87,7 +87,6 @@ func watchDir(conf Config, path string) {
 			subpath := filepath.Join(path, sub.Name())
 			if !matchExclude {
 				go watchDir(conf, subpath)
-				logger <- subpath
 			}
 		}
 	}
