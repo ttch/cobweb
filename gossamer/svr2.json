@@ -6,6 +6,7 @@
             "path":"/Users/march/jobs/Server2/src/auth",
             "include":"*.go",
             "exclude":"main.go",
+            "exclude-dirs":[".*", "static"],
             "action":["curl", "http://192.168.59.103:9081/listen/auth"]
         },
         {
@@ -14,6 +15,7 @@
             "path":"/Users/march/jobs/Server2/src/bms",
             "include":"*.go",
             "exclude":"main.go",
+            "exclude-dirs":[".*", "static"],
             "action":["curl", "http://192.168.59.103:9081/listen/bms"]
         },
         {
@@ -22,6 +24,7 @@
             "path":"/Users/march/jobs/Server2/src/aiysea",
             "include":"*.go",
             "exclude":"main.go",
+            "exclude-dirs":[".*", "static"],
             "action":["curl", "http://192.168.59.103:9081/listen/aiysea"]
         },
         {
@@ -29,6 +32,7 @@
             "type":"compass",
             "path":"/Users/march/jobs/Server2/src/aiysea/static",
             "include":"*.sass",
+            "exclude-dirs":[".*", "bower_components"],
             "action":["curl", "http://192.168.59.103:9081/listen/aiysea-sass"]
         },
         {
@@ -36,8 +40,8 @@
             "type":"beego",
             "include":"*.go",
             "path":"/Users/march/jobs/Server2/src/status",
-            "include":"*.go",
             "exclude":"main.go",
+            "exclude-dirs":[".*", "static"],
             "action":["curl", "http://192.168.59.103:9081/listen/status"]
         }
     ]
