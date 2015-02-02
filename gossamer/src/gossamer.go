@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"os/exec"
 	"path/filepath"
 
@@ -14,6 +13,7 @@ import (
 
 var conf = flag.String("c", "config.json", "gossamer config file path")
 var logger chan string = make(chan string)
+var count = 0
 
 func main() {
 	flag.Parse()
@@ -30,7 +30,7 @@ func main() {
 				var conf Config
 				err = json.Unmarshal(buffer, &conf)
 				CheckErr(err)
-				go watchIt(conf)
+				watchIt(conf)
 			}
 		} else {
 			panic(fmt.Errorf("except path settings but got %v\n", configs))
@@ -45,40 +45,52 @@ func main() {
 }
 
 type Config struct {
-	Name    string      `json:"name"`
-	Type    string      `json:"type"`
-	Path    string      `json:"path"`
-	Action  []string    `json:"action"`
-	Include interface{} `json:"include"`
-	Exclude interface{} `json:"exclude"`
+	Name       string      `json:"name"`
+	Type       string      `json:"type"`
+	Path       string      `json:"path"`
+	Action     []string    `json:"action"`
+	Include    interface{} `json:"include"`
+	Exclude    interface{} `json:"exclude"`
+	ExcludeDir interface{} `json:"exclude-dir"`
 }
 
 func watchIt(conf Config) {
+	fmt.Printf("watching %v ... \n", conf.Path)
+	go watchDir(conf, conf.Path)
+}
+
+func watchDir(conf Config, path string) {
 	watcher, err := fsnotify.NewWatcher()
+	CheckErr(err)
+	defer watcher.Close()
+	err = watcher.Watch(path)
 	if err != nil {
-		panic(fmt.Errorf("watcher create failed: %v", err))
+		panic(fmt.Errorf("watcher can't watch %v , got: %v \n count: %v", path, err, count))
 	}
-	defer func() {
-		watcher.Close()
-		logger <- fmt.Sprintf("watcher on %s closed.", conf.Path)
-	}()
+	count += 1
+	subs, err := ioutil.ReadDir(conf.Path)
+	CheckErr(err)
+	for _, sub := range subs {
+		if sub.IsDir() {
+			subpath := filepath.Join(path, sub.Name())
+			matchExclude := false
+			if conf.ExcludeDir != nil {
+				extds := conf.ExcludeDir.([]interface{})
+				for _, extd := range extds {
+					extpath := extd.(string)
+					matchExclude, err := filepath.Match(extpath, sub.Name())
+					CheckErr(err)
+					if matchExclude {
+						break
 
-	logger <- fmt.Sprintf("watching %s ...", conf.Path)
-	err = filepath.Walk(conf.Path, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			panic(fmt.Errorf("walk to %s and got error %v", path, err))
-		}
-		if info.IsDir() {
-			err = watcher.Watch(path)
-			if err != nil {
-				panic(fmt.Errorf("watcher can't watch %v , got: %v", path, err))
+					}
+				}
 			}
-
+			if !matchExclude {
+				go watchDir(conf, subpath)
+				logger <- subpath
+			}
 		}
-		return nil
-	})
-	if err != nil {
-		panic(fmt.Errorf("watcher can't watch %v , got: %v", conf.Path, err))
 	}
 
 	for {
@@ -89,7 +101,6 @@ func watchIt(conf Config) {
 			panic(fmt.Errorf("got error: %v when watch %v", err, conf.Name))
 		}
 	}
-
 }
 
 func OnNotify(conf Config, event *fsnotify.FileEvent) {
