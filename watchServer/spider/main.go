@@ -1,27 +1,9 @@
-/*
-package main
-
-import (
-	_ "spider/routers"
-
-	"github.com/astaxie/beego"
-)
-
-func init(){
-	beego.SetLevel(beego.LevelDebug)
-}
-
-func main() {
-	beego.Run()
-}
-*/
-
 package main
 
 import (
     "github.com/astaxie/beego"
     "fmt"
-	"github.com/ttch/watchServer/spider/models"
+	"github.com/ttch/watchser/models"
 	"encoding/json"
 )
 
@@ -45,10 +27,7 @@ func (this *MainController) Post() {
 	json.Unmarshal(this.Ctx.Input.RequestBody, &oCmd)
 
 	if action != "" {
-		
-		//listener := models.Listener()
 
-		//if act, ok := listener[action]; ok {
 		fmt.Println([]string{oCmd.Command,oCmd.Name})
 		
 		message, err := models.RunCommand([]string{oCmd.Command,oCmd.Name})
@@ -56,15 +35,6 @@ func (this *MainController) Post() {
 		models.CheckErr(err)
 		fmt.Println(message)
 		this.Ctx.WriteString(message)
-		
-		/*
-		c.Data["json"] = map[string]interface{}{
-			"message": message,
-			"error":   err}
-		c.ServeJson()
-		fmt.Println(c)
-		*/
-		//}
 	}
 
 }

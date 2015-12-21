@@ -29,3 +29,18 @@ config.json是配置文件，执行前你可以通过配置选项来实现监视
 ------
 
 注意：键盘党和急躁党，用的时候，稍微耐心点，会很爽。
+
+
+项目为了GO使用方便，所以拆分成了两个独立的项目，可以在前端和后端分别下载，也可以编写自动脚本进行拆分安装。
+
+传送门：
+
+	https://github.com/ttch/watchser
+	
+	https://github.com/ttch/watchclient
+
+可以分别使用go命令
+
+	go get github.com/ttch/watchser
+	
+	go get github.com/ttch/watchclient
