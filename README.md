@@ -7,7 +7,7 @@ CobWeb主要是为了解决在docker中，如果你的工程文件，比如.go�
 
 确保docker内已经安装`beego`后,在docker内执行
 
-	go get github.com/ttch/cobweb
+	go get github.com/ttch/cobweb/watchServer/spider
 	
 然后在go/src/github.com/ttch/cobweb/watchServer/spider目录下执行
 	
@@ -18,7 +18,7 @@ CobWeb主要是为了解决在docker中，如果你的工程文件，比如.go�
 在mac端，同时安装
 
 	go get github.com/howeyc/fsnotify
-	go get github.com/ttch/cobweb
+	go get go get github.com/ttch/cobweb/watchClient
 
 然后在go/src/github.com/ttch/cobweb/watchClient目录执行
 
